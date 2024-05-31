@@ -1,0 +1,16 @@
+
+spring:
+  liquibase:
+    change-log: classpath:db/changelog/db.changelog-master.xml
+
+  datasource:
+    url: jdbc:postgresql://localhost:5432/auction
+    username: test-user
+    password: test-password
+    driver-class: org.postgresql.Driver
+
+
+
+security:
+  jwt:
+    secret-key: verysecretkeyfghjkqwertyui
