@@ -1,5 +1,8 @@
-package com.management.user.security;
+package com.management.user.configuration;
 
+import com.management.user.security.CustomUserDetailService;
+import com.management.user.security.JwtAuthenticationFilter;
+import com.management.user.security.UnauthorizedHandler;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;

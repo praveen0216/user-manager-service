@@ -1,6 +1,6 @@
 package com.management.user.security;
 
-import com.example.spring_security_demo.service.UserService;
+import com.management.user.service.UserAuthService;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -12,15 +12,15 @@ import java.util.List;
 @Component
 public class CustomUserDetailService  implements UserDetailsService {
 
-    private final UserService userService;
+    private final UserAuthService userAuthService;
 
-    public CustomUserDetailService(UserService userService) {
-        this.userService = userService;
+    public CustomUserDetailService(UserAuthService userAuthService) {
+        this.userAuthService = userAuthService;
     }
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        var user = userService.findByEmail(username).orElseThrow();
+        var user = userAuthService.findByEmail(username).orElseThrow();
 
         return new UserPrincipal(user.getId(),
                 user.getEmail(),

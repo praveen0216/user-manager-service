@@ -30,9 +30,10 @@
                 <constraints nullable="false"/>
             </column>
         </createTable>
-        <addForeignKeyConstraint baseTableName="auctions"
+        <addForeignKeyConstraint baseTableName="tb-auctions"
                                  baseColumnNames="auctioneer_id"
                                  constraintName="fk_auction_auctioneer"
-                                 referencedTableName="users"
+                                 referencedTableName="tb-users"
                                  referencedColumnNames="id"/>
     </changeSet>
+</databaseChangeLog>

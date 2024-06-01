@@ -1,13 +1,19 @@
-
+server:
+  port: 9001
 spring:
   liquibase:
-    change-log: classpath:db/changelog/db.changelog-master.xml
+    change-log: classpath:db/changelog/master.xml
+    enabled: true
 
   datasource:
-    url: jdbc:postgresql://localhost:5432/auction
-    username: test-user
-    password: test-password
+    url: jdbc:postgresql://localhost:5432/postgres
+    username: postgres
+    password: postgres
     driver-class: org.postgresql.Driver
+    initialization-mode: always
+  jpa:
+    hibernate:
+      ddl-auto: none
 
 
 

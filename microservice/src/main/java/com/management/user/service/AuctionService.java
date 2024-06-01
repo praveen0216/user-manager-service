@@ -5,6 +5,7 @@ import com.management.user.input.mapper.BidMapper;
 import com.management.user.model.Auction;
 import com.management.user.model.Bid;
 import com.management.user.model.Status;
+import com.management.user.output.repository.entity.UserEntity;
 import com.management.user.output.repository.service.AuctionRepositoryService;
 import com.management.user.output.repository.service.BidRepositoryService;
 import com.management.user.output.repository.service.UserRepositoryService;
@@ -46,7 +47,8 @@ public class AuctionService {
     }
 
     public Auction createAuction(Auction auction, Long auctioneerId) {
-        auction.setAuctioneer(userRepository.findById(auctioneerId).orElseThrow(() -> new RuntimeException("Auctioneer not found")));
+        UserEntity auctioneerNotFound = userRepository.findById(auctioneerId).orElseThrow(() -> new RuntimeException("Auctioneer not found"));
+        auction.setAuctioneerId(auctioneerNotFound.getId());
         auction.setStatus(Status.ONGOING);
         return auctionMapper.entityToModel(auctionRepositoryService.create(auction));
     }
@@ -55,7 +57,8 @@ public class AuctionService {
         Auction auction = auctionMapper.entityToModel(auctionRepositoryService.findByAuctionId(auctionId)
                 .orElseThrow(() -> new RuntimeException("Auction not found")));
         bid.setAuctionId(auction.getId());
-        bid.setParticipantId(userRepositoryService.findById(participantId).orElseThrow(() -> new RuntimeException("Participant not found")));
+        UserEntity participantFound = userRepositoryService.findById(participantId).orElseThrow(() -> new RuntimeException("Participant not found"));
+        bid.setParticipantId(participantFound.getId());
 
         List<Bid> bids = bidMapper.entitiesToModel(bidRepositoryService.findByAuctionId(auctionId));
         if (!bids.isEmpty() && bid.getBidAmount().compareTo(bids.get(0).getBidAmount()) <= 0) {
@@ -70,7 +73,7 @@ public class AuctionService {
 
     public Auction getAuctionDetails(Long auctionId) {
         return auctionMapper.entityToModel(auctionRepositoryService.findByAuctionId(auctionId)
-                .orElseThrow(() -> new AuctionNotFoundException(String.format("Auction not found with id {}", auctionId)));
+                .orElseThrow(() -> new AuctionNotFoundException(String.format("Auction not found with id {}", auctionId))));
     }
 
     public List<Auction> getAllAuctions() {
@@ -81,7 +84,7 @@ public class AuctionService {
         List<Auction> ongoingAuctions = auctionMapper.entitiesToModels(auctionRepositoryService.findByStatus(Status.ONGOING));
         for (Auction auction : ongoingAuctions) {
             if (LocalDateTime.now().isAfter(auction.getEndTime())) {
-                List<Bid> bids = bidRepositoryService.findByAuctionId(auction.getId());
+                List<Bid> bids = bidMapper.entitiesToModel(bidRepositoryService.findByAuctionId(auction.getId()));
                 if (!bids.isEmpty() && bids.get(0).getBidAmount().compareTo(auction.getReservedPrice()) >= 0) {
                     auction.setStatus(Status.SUCCESS);
                 } else {

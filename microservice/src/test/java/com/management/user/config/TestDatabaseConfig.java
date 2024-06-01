@@ -19,11 +19,11 @@ public class TestDatabaseConfig {
     @Bean
     @DependsOn("postgreSQLContainer")
     public DataSource dataSource(PostgreSQLContainer<?> postgreSQLContainer) {
-        DriverManagerDataSource dataSource = new DriverManagerDataSource();
-        dataSource.setDriverClassName(postgreSQLContainer.getDriverClassName());
-        dataSource.setUrl(postgreSQLContainer.getJdbcUrl());
-        dataSource.setUsername(postgreSQLContainer.getUsername());
-        dataSource.setPassword(postgreSQLContainer.getPassword());
-        return dataSource;
+            DriverManagerDataSource dataSource = new DriverManagerDataSource();
+            dataSource.setDriverClassName(postgreSQLContainer.getDriverClassName());
+            dataSource.setUrl(postgreSQLContainer.getJdbcUrl());
+            dataSource.setUsername(postgreSQLContainer.getUsername());
+            dataSource.setPassword(postgreSQLContainer.getPassword());
+            return dataSource;
     }
 }

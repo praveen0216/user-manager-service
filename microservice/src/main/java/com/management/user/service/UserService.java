@@ -7,6 +7,8 @@ import com.management.user.output.repository.spi.UserRepository;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class UserService {
 
@@ -42,5 +44,9 @@ public class UserService {
 
     public User findByUsername(String username) {
         return userMapper.entityToModel(userRepositoryService.findByUsername(username).orElse(null));
+    }
+
+    public List<User> getAllUsers() {
+        return userMapper.entitiesToModel(userRepositoryService.findAll());
     }
 }

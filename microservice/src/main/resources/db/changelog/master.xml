@@ -5,8 +5,8 @@
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
 
-    <include file="db/changelog/changesets/2024-05-001-tb-users-create.xml" relativeToChangelogFile="true"/>
-    <include file="db/changelog/changesets/2024-05-002-tb-auctions-create.xml" relativeToChangelogFile="true"/>
-    <include file="db/changelog/changesets/2024-05-003-tb-bids-create.xml" relativeToChangelogFile="true"/>
+    <include file="db/changelog/changesets/2024-05-001-tb-users-create.xml" />
+    <include file="db/changelog/changesets/2024-05-002-tb-auctions-create.xml" />
+    <include file="db/changelog/changesets/2024-05-003-tb-bids-create.xml" />
 
 </databaseChangeLog>

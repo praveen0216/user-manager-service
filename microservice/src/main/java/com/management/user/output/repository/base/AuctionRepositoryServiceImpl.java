@@ -7,15 +7,19 @@ import com.management.user.model.Status;
 import com.management.user.output.repository.entity.AuctionEntity;
 import com.management.user.output.repository.service.AuctionRepositoryService;
 import com.management.user.output.repository.spi.AuctionRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.Optional;
 
+@Component
 public class AuctionRepositoryServiceImpl implements AuctionRepositoryService {
 
     private final AuctionRepository auctionRepository;
     private final AuctionMapper auctionMapper;
 
+    @Autowired
     public AuctionRepositoryServiceImpl(AuctionRepository auctionRepository, AuctionMapper auctionMapper) {
         this.auctionRepository = auctionRepository;
         this.auctionMapper = auctionMapper;
@@ -47,6 +51,10 @@ public class AuctionRepositoryServiceImpl implements AuctionRepositoryService {
         if (!fromDb.isPresent()) {
             throw new AuctionNotFoundException(String.format("No auction found with the id {} ",  auction.getId()));
         }
+        AuctionEntity updateAuction = fromDb.get();
+        updateAuction.setStatus(auction.getStatus());
+
+        return auctionRepository.saveAndFlush(updateAuction);
 
     }
 }

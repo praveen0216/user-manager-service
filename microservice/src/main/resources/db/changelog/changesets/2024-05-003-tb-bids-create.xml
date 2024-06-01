@@ -6,7 +6,7 @@
         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
 
     <changeSet id="3" author="author">
-        <createTable tableName="bids">
+        <createTable tableName="tb-bids">
             <column name="id" type="BIGINT" autoIncrement="true">
                 <constraints primaryKey="true"/>
             </column>
@@ -23,14 +23,15 @@
                 <constraints nullable="false"/>
             </column>
         </createTable>
-        <addForeignKeyConstraint baseTableName="bids"
+        <addForeignKeyConstraint baseTableName="tb-bids"
                                  baseColumnNames="auction_id"
                                  constraintName="fk_bid_auction"
-                                 referencedTableName="auctions"
+                                 referencedTableName="tb-auctions"
                                  referencedColumnNames="id"/>
-        <addForeignKeyConstraint baseTableName="bids"
+        <addForeignKeyConstraint baseTableName="tb-bids"
                                  baseColumnNames="participant_id"
                                  constraintName="fk_bid_participant"
-                                 referencedTableName="users"
+                                 referencedTableName="tb-users"
                                  referencedColumnNames="id"/>
     </changeSet>
+</databaseChangeLog>
