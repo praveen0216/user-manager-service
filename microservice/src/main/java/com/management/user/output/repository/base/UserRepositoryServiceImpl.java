@@ -2,6 +2,7 @@ package com.management.user.output.repository.base;
 
 import com.management.user.input.mapper.UserMapper;
 import com.management.user.model.User;
+import com.management.user.model.UserFrequency;
 import com.management.user.output.repository.entity.UserEntity;
 import com.management.user.output.repository.service.UserRepositoryService;
 import com.management.user.output.repository.spi.UserRepository;
@@ -51,5 +52,14 @@ public class UserRepositoryServiceImpl implements UserRepositoryService {
     @Override
     public Optional<UserEntity> findByEmail(String email) {
         return userRepository.findByEmail(email);
+    }
+
+    @Override
+    public List<UserFrequency> findUserBidCounts() {
+        return userRepository.findUserBidCounts();
+    }
+    @Override
+    public List<UserFrequency> findUserAuctionCounts() {
+        return userRepository.findUserAuctionCounts();
     }
 }

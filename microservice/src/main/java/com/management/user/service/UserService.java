@@ -2,6 +2,7 @@ package com.management.user.service;
 
 import com.management.user.input.mapper.UserMapper;
 import com.management.user.model.User;
+import com.management.user.model.UserFrequency;
 import com.management.user.output.repository.service.UserRepositoryService;
 import org.springframework.stereotype.Service;
 
@@ -30,5 +31,9 @@ public class UserService {
 
     public List<User> getAllUsers() {
         return  userMapper.entitiesToModel(userRepositoryService.findAll());
+    }
+
+    public List<UserFrequency> getUserBidCountDTOS() {
+        return userRepositoryService.findUserBidCounts();
     }
 }
