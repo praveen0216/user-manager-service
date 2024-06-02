@@ -24,7 +24,7 @@ public class JwtIssuer {
     public String issue(long userId, String email, List<String> roles) {
         return JWT.create()
                 .withSubject(String.valueOf(userId))
-                .withExpiresAt(Instant.now().plus(Duration.of(5, ChronoUnit.MINUTES)))
+                .withExpiresAt(Instant.now().plus(Duration.of(30, ChronoUnit.MINUTES)))
                 .withClaim("email", email)
                 .withClaim("role", roles)
                 //.withClaim("password", "test")

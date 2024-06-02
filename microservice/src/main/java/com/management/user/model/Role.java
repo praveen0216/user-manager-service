@@ -2,7 +2,7 @@ package com.management.user.model;
 
 public enum Role {
 
-    AUCTIONEER,
-    PARTICIPANT,
-    ADMIN
+    ROLE_AUCTIONEER,
+    ROLE_PARTICIPANT,
+    ROLE_ADMIN
 }

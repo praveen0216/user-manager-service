@@ -28,7 +28,7 @@ public class ParticipantController {
         this.userService = userService;
     }
 
-    @PreAuthorize("hasRole('PARTICIPANT')")
+    //@PreAuthorize("hasRole('PARTICIPANT')")
     @PostMapping("/{id}/bids")
     public ResponseEntity<String> submitBid(@PathVariable("id") Long auctionId, @RequestParam(name = "bidAmount") BigDecimal bidAmount) {
         UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();

@@ -10,15 +10,16 @@ import java.util.List;
 public class JwtToPrincipalConverter {
 
     public UserPrincipal convert(DecodedJWT jwt) {
-        return new UserPrincipal(Long.valueOf(jwt.getSubject()),
+        UserPrincipal userPrincipal = new UserPrincipal(Long.valueOf(jwt.getSubject()),
                 jwt.getClaim("email").asString(),
                 jwt.getClaim("password").asString(),
                 extractAuthoritiesFromClaim(jwt)
-                );
+        );
+        return userPrincipal;
     }
 
     private List<SimpleGrantedAuthority> extractAuthoritiesFromClaim(DecodedJWT jwt) {
-        var claim = jwt.getClaim("");
+        var claim = jwt.getClaim("role");
         if (claim.isNull() || claim.isMissing()) return List.of();
         return claim.asList(SimpleGrantedAuthority.class);
     }

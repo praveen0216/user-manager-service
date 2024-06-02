@@ -25,7 +25,7 @@ public class AuctioneerController {
         this.userService = userService;
     }
 
-    @PreAuthorize("hasRole('AUCTIONEER')")
+    //@PreAuthorize("hasRole('AUCTIONEER')")
     @PostMapping("/add")
     public ResponseEntity<String> addItem(@RequestBody Auction auction) {
         //Long auctioneerId = userService.findByEmail("auctioneer1@gmail.com"/*getUserDetails().getUsername()*/).getId();
@@ -35,7 +35,7 @@ public class AuctioneerController {
         return ResponseEntity.ok("Item added successfully");
     }
 
-    @PreAuthorize("hasRole('AUCTIONEER')")
+    //@PreAuthorize("hasRole('AUCTIONEER')")
     @GetMapping("/status/{id}")
     public AuctionDetails getAuctionDetails(@PathVariable("id") Long id) {
         return auctionService.getAuctionDetails(id);
