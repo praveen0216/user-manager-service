@@ -1,4 +1,3 @@
-/*
 package com.management.user.configuration;
 
 import com.management.user.security.CustomUserDetailService;
@@ -7,12 +6,12 @@ import com.management.user.security.UnauthorizedHandler;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -46,12 +45,10 @@ public class WebSecurityConfig {
         http.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class );
         return http
                 .csrf(AbstractHttpConfigurer::disable)
-                */
-/*.csrf(csrf -> csrf
+                        /*.csrf(csrf -> csrf
                         .ignoringRequestMatchers("/auth/login")
                         .ignoringRequestMatchers("/user/register")
-                        .ignoringRequestMatchers("/admin")// Disable CSRF protection for this endpoint
-                )*//*
+                        .ignoringRequestMatchers("/admin")// Disable CSRF protection for this endpoint*/
 
                 .exceptionHandling(exceptionHandling ->
                         exceptionHandling.authenticationEntryPoint(unauthorizedHandler)
@@ -59,10 +56,16 @@ public class WebSecurityConfig {
                 .securityMatcher("/**")
                 .formLogin(withDefaults())
                 .authorizeHttpRequests(registry -> registry
-                        //.requestMatchers("/**" ).permitAll()
-                        .requestMatchers("/admin/**").hasRole("ADMINISTRATOR")
+                        .requestMatchers("/", "/admin/report",
+                                "/participant/**",
+                                "/auctioneer/status/*",
+                                "/auctioneer/add",
+                                "/user/register",
+                                "/auth/login"
+                                ).permitAll()
+                        /*.requestMatchers("/admin/**").hasRole("ADMINISTRATOR")
                         .requestMatchers("/auctioneer/**").hasRole("AUCTIONEER")
-                        .requestMatchers("/participant/**").hasRole("PARTICIPANT")
+                        .requestMatchers("/participant/**").hasRole("PARTICIPANT")*/
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(session -> session
@@ -87,7 +90,7 @@ public class WebSecurityConfig {
     }
 
 
-    @Bean
+   /* @Bean
     public AuthenticationManager authenticationManager() throws Exception {
         return new AuthenticationManager() {
             @Override
@@ -95,10 +98,9 @@ public class WebSecurityConfig {
                 return authentication;
             }
         };
-    }
+    }*/
 
-    */
-/*@Bean
+@Bean
     public DaoAuthenticationProvider authenticationProvider() {
         DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
         authProvider.setUserDetailsService(customUserDetailService);
@@ -109,7 +111,6 @@ public class WebSecurityConfig {
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
         return authenticationConfiguration.getAuthenticationManager();
-    }*//*
+    }
 
 }
-*/
