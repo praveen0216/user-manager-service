@@ -1,16 +1,19 @@
 package com.management.user.output.repository.entity;
 
-import com.management.user.model.Bid;
 import com.management.user.model.Status;
-import com.management.user.model.User;
+
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EntityListeners;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -20,31 +23,32 @@ import java.util.Objects;
 
 @Entity
 @Table(name = "tb_auction")
+@EntityListeners(AuditingEntityListener.class)
 public class AuctionEntity extends CommonEntity {
 
 
-    @Column(name = "title")
+    @Column(name = "title", nullable = false)
     private String title;
 
     @Column(name = "description")
     private String description;
-    @Column(name = "reservedPrice")
+    @Column(name = "reserved_price", nullable = false)
     private BigDecimal reservedPrice;
 
-    @Column(name = "startTime")
+    @Column(name = "start_time", nullable = false)
     private LocalDateTime startTime;
 
-    @Column(name = "endTime")
+    @Column(name = "end_time", nullable = false)
     private LocalDateTime endTime;
 
-    @ManyToOne
-    @JoinColumn(name = "auctioneer_id")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "auctioneer_id", referencedColumnName = "id", nullable = false)
     private UserEntity auctioneer;
 
-    @OneToMany(mappedBy = "auction")
+    @OneToMany(mappedBy = "auction", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<BidEntity> bids;
 
-    @Column(name = "status")
+    @Column(name = "status", nullable = false)
     @Enumerated(EnumType.STRING)
     private Status status;
 

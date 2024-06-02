@@ -1,10 +1,10 @@
 package com.management.user.model;
 
-public class LoginResponse {
+public class AccessTokenResponse {
 
     private final String accessToken;
 
-    public LoginResponse(String accessToken) {
+    public AccessTokenResponse(String accessToken) {
         this.accessToken = accessToken;
     }
 

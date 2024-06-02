@@ -1,6 +1,7 @@
 package com.management.user.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotEmpty;
 
 import java.util.Objects;
@@ -9,11 +10,11 @@ import java.util.Objects;
 public class User {
     private Long id;
 
-    @NotEmpty(message = "Username is required")
-    private String username;
+    @NotEmpty(message = "Email is required")
+    @Email
+    private String email;
 
     @NotEmpty(message = "Password is required")
-    @JsonIgnore
     private String password;
 
     @NotEmpty(message = "Role is required [AUCTIONEER, PARTICIPANT, ADMIN]")
@@ -27,12 +28,12 @@ public class User {
         this.id = id;
     }
 
-    public String getUsername() {
-        return username;
+    public String getEmail() {
+        return email;
     }
 
-    public void setUsername(String username) {
-        this.username = username;
+    public void setEmail(String email) {
+        this.email = email;
     }
 
     public String getPassword() {
@@ -55,19 +56,19 @@ public class User {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof User user)) return false;
-        return Objects.equals(getId(), user.getId()) && Objects.equals(getUsername(), user.getUsername()) && Objects.equals(getPassword(), user.getPassword()) && getRole() == user.getRole();
+        return Objects.equals(getId(), user.getId()) && Objects.equals(getEmail(), user.getEmail()) && Objects.equals(getPassword(), user.getPassword()) && getRole() == user.getRole();
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getId(), getUsername(), getPassword(), getRole());
+        return Objects.hash(getId(), getEmail(), getPassword(), getRole());
     }
 
     @Override
     public String toString() {
         return "User{" +
                 "id=" + id +
-                ", username='" + username + '\'' +
+                ", email='" + email + '\'' +
                 ", password='" + password + '\'' +
                 ", role=" + role +
                 '}';

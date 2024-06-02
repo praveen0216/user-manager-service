@@ -13,7 +13,7 @@ public class Bid {
     @NotNull(message = "Bid amount is required")
     private BigDecimal bidAmount;
 
-    private LocalDateTime timestamp;
+    private LocalDateTime bidTime;
 
 
     @NotNull(message = "Auction ID is required")
@@ -38,12 +38,12 @@ public class Bid {
         this.bidAmount = bidAmount;
     }
 
-    public LocalDateTime getTimestamp() {
-        return timestamp;
+    public LocalDateTime getBidTime() {
+        return bidTime;
     }
 
-    public void setTimestamp(LocalDateTime timestamp) {
-        this.timestamp = timestamp;
+    public void setBidTime(LocalDateTime bidTime) {
+        this.bidTime = bidTime;
     }
 
     public Long getAuctionId() {
@@ -66,12 +66,12 @@ public class Bid {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof Bid bid)) return false;
-        return Objects.equals(getId(), bid.getId()) && Objects.equals(getBidAmount(), bid.getBidAmount()) && Objects.equals(getTimestamp(), bid.getTimestamp()) && Objects.equals(getAuctionId(), bid.getAuctionId()) && Objects.equals(getParticipantId(), bid.getParticipantId());
+        return Objects.equals(getId(), bid.getId()) && Objects.equals(getBidAmount(), bid.getBidAmount()) && Objects.equals(getBidTime(), bid.getBidTime()) && Objects.equals(getAuctionId(), bid.getAuctionId()) && Objects.equals(getParticipantId(), bid.getParticipantId());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getId(), getBidAmount(), getTimestamp(), getAuctionId(), getParticipantId());
+        return Objects.hash(getId(), getBidAmount(), getBidTime(), getAuctionId(), getParticipantId());
     }
 
     @Override
@@ -79,7 +79,7 @@ public class Bid {
         return "Bid{" +
                 "id=" + id +
                 ", bidAmount=" + bidAmount +
-                ", timestamp=" + timestamp +
+                ", timestamp=" + bidTime +
                 ", auctionId=" + auctionId +
                 ", participantId=" + participantId +
                 '}';

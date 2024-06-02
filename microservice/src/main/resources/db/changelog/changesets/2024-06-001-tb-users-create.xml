@@ -5,19 +5,27 @@
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
 
-    <changeSet id="1" author="Praveen.Sharma">
-        <createTable tableName="tb-users">
+    <changeSet id="2024-06-002-create-tb-users" author="Praveen.Sharma">
+        <createTable tableName="tb_users">
             <column name="id" type="BIGINT" autoIncrement="true">
                 <constraints primaryKey="true"/>
             </column>
-            <column name="username" type="VARCHAR(255)">
+            <column name="email" type="VARCHAR(255)">
                 <constraints nullable="false" unique="true"/>
             </column>
             <column name="password" type="VARCHAR(255)" />
             <column name="role" type="VARCHAR(50)">
                 <constraints nullable="false"/>
             </column>
+            <!-- Common entity columns -->
+            <column name="creation_date" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="last_update_date" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
         </createTable>
     </changeSet>
+
 
 </databaseChangeLog>

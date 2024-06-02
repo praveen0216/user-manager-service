@@ -1,12 +1,13 @@
 package com.management.user.output.repository.entity;
 
-import com.management.user.model.Auction;
-import com.management.user.model.User;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EntityListeners;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -15,21 +16,22 @@ import java.util.Objects;
 
 @Entity
 @Table(name = "tb_bid")
+@EntityListeners(AuditingEntityListener.class)
 public class BidEntity extends CommonEntity {
 
-    @ManyToOne
-    @JoinColumn(name = "auction_id")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "auction_id", referencedColumnName = "id", nullable = false)
     private AuctionEntity auction;
 
-    @ManyToOne
-    @JoinColumn(name = "participant_id")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "participant_id", referencedColumnName = "id", nullable = false)
     private UserEntity participant;
 
-    @Column(name = "bidAmount")
+    @Column(name = "bid_amount", nullable = false)
     private BigDecimal bidAmount;
 
-    @Column(name = "currentTime")
-    private LocalDateTime currentTime;
+    @Column(name = "bid_time", nullable = false)
+    private LocalDateTime bidTime;
 
     public AuctionEntity getAuction() {
         return auction;
@@ -55,12 +57,12 @@ public class BidEntity extends CommonEntity {
         this.bidAmount = bidAmount;
     }
 
-    public LocalDateTime getCurrentTime() {
-        return currentTime;
+    public LocalDateTime getBidTime() {
+        return bidTime;
     }
 
-    public void setCurrentTime(LocalDateTime currentTime) {
-        this.currentTime = currentTime;
+    public void setBidTime(LocalDateTime bidTime) {
+        this.bidTime = bidTime;
     }
 
 
@@ -68,12 +70,12 @@ public class BidEntity extends CommonEntity {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof BidEntity bidEntity)) return false;
-        return Objects.equals(getAuction(), bidEntity.getAuction()) && Objects.equals(getParticipant(), bidEntity.getParticipant()) && Objects.equals(getBidAmount(), bidEntity.getBidAmount()) && Objects.equals(getCurrentTime(), bidEntity.getCurrentTime());
+        return Objects.equals(getAuction(), bidEntity.getAuction()) && Objects.equals(getParticipant(), bidEntity.getParticipant()) && Objects.equals(getBidAmount(), bidEntity.getBidAmount()) && Objects.equals(getBidTime(), bidEntity.getBidTime());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getAuction(), getParticipant(), getBidAmount(), getCurrentTime());
+        return Objects.hash(getAuction(), getParticipant(), getBidAmount(), getBidTime());
     }
 
     @Override
@@ -82,7 +84,7 @@ public class BidEntity extends CommonEntity {
                 "auction=" + auction +
                 ", participant=" + participant +
                 ", bidAmount=" + bidAmount +
-                ", currentTime=" + currentTime +
+                ", currentTime=" + bidTime +
                 '}';
     }
 }

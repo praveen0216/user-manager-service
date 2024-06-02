@@ -10,11 +10,11 @@ public interface UserRepositoryService {
 
     UserEntity create(User user);
 
-    Optional<UserEntity> findByUsername(String username);
-
     Optional<UserEntity> findByParticipantId(Long participantId);
 
     List<UserEntity> findAll();
 
     Optional<UserEntity> findById(Long participantId);
+
+    Optional<UserEntity> findByEmail(String email);
 }

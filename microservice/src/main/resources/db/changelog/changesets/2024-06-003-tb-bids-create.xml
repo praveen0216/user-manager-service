@@ -5,15 +5,15 @@
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
 
-    <changeSet id="3" author="author">
-        <createTable tableName="tb-bids">
+    <changeSet id="2024-06-004-create-tb-bids" author="author">
+        <createTable tableName="tb_bid">
             <column name="id" type="BIGINT" autoIncrement="true">
                 <constraints primaryKey="true"/>
             </column>
             <column name="bid_amount" type="NUMERIC(19, 2)">
                 <constraints nullable="false"/>
             </column>
-            <column name="timestamp" type="TIMESTAMP">
+            <column name="bid_time" type="TIMESTAMP">
                 <constraints nullable="false"/>
             </column>
             <column name="auction_id" type="BIGINT">
@@ -22,16 +22,24 @@
             <column name="participant_id" type="BIGINT">
                 <constraints nullable="false"/>
             </column>
+
+            <!-- Common entity columns -->
+            <column name="creation_date" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="last_update_date" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
         </createTable>
-        <addForeignKeyConstraint baseTableName="tb-bids"
+        <addForeignKeyConstraint baseTableName="tb_bid"
                                  baseColumnNames="auction_id"
                                  constraintName="fk_bid_auction"
-                                 referencedTableName="tb-auctions"
+                                 referencedTableName="tb_auction"
                                  referencedColumnNames="id"/>
-        <addForeignKeyConstraint baseTableName="tb-bids"
+        <addForeignKeyConstraint baseTableName="tb_bid"
                                  baseColumnNames="participant_id"
                                  constraintName="fk_bid_participant"
-                                 referencedTableName="tb-users"
+                                 referencedTableName="tb_users"
                                  referencedColumnNames="id"/>
     </changeSet>
 </databaseChangeLog>

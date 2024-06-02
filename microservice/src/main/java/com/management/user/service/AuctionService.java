@@ -1,10 +1,16 @@
 package com.management.user.service;
 import com.management.user.exception.AuctionNotFoundException;
+import com.management.user.exception.InputException;
+import com.management.user.exception.ParticipantNotFoundException;
 import com.management.user.input.mapper.AuctionMapper;
 import com.management.user.input.mapper.BidMapper;
+import com.management.user.input.mapper.CycleAvoidingMappingContext;
 import com.management.user.model.Auction;
+import com.management.user.model.AuctionDetails;
 import com.management.user.model.Bid;
 import com.management.user.model.Status;
+import com.management.user.output.repository.entity.AuctionEntity;
+import com.management.user.output.repository.entity.BidEntity;
 import com.management.user.output.repository.entity.UserEntity;
 import com.management.user.output.repository.service.AuctionRepositoryService;
 import com.management.user.output.repository.service.BidRepositoryService;
@@ -15,8 +21,10 @@ import com.management.user.output.repository.spi.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class AuctionService {
@@ -47,41 +55,57 @@ public class AuctionService {
     }
 
     public Auction createAuction(Auction auction, Long auctioneerId) {
-        UserEntity auctioneerNotFound = userRepository.findById(auctioneerId).orElseThrow(() -> new RuntimeException("Auctioneer not found"));
-        auction.setAuctioneerId(auctioneerNotFound.getId());
+        UserEntity auctioneer = userRepository.findById(auctioneerId).orElseThrow(() -> new RuntimeException("Auctioneer not found"));
         auction.setStatus(Status.ONGOING);
-        return auctionMapper.entityToModel(auctionRepositoryService.create(auction));
+        return auctionMapper.entityToModel(auctionRepositoryService.create(auction, auctioneer),  new CycleAvoidingMappingContext());
     }
 
-    public Bid submitBid(Long auctionId, Long participantId, Bid bid) {
+    public Bid submitBid(Long auctionId, Long participantId, BigDecimal bidAmount) {
         Auction auction = auctionMapper.entityToModel(auctionRepositoryService.findByAuctionId(auctionId)
-                .orElseThrow(() -> new RuntimeException("Auction not found")));
-        bid.setAuctionId(auction.getId());
-        UserEntity participantFound = userRepositoryService.findById(participantId).orElseThrow(() -> new RuntimeException("Participant not found"));
-        bid.setParticipantId(participantFound.getId());
+                .orElseThrow(() -> new AuctionNotFoundException("Auction not found")) ,  new CycleAvoidingMappingContext());
 
-        List<Bid> bids = bidMapper.entitiesToModel(bidRepositoryService.findByAuctionId(auctionId));
-        if (!bids.isEmpty() && bid.getBidAmount().compareTo(bids.get(0).getBidAmount()) <= 0) {
-            throw new RuntimeException("Bid amount must be higher than the current highest bid");
+        UserEntity participantFound = userRepositoryService.findById(participantId).orElseThrow(
+                () -> new ParticipantNotFoundException("Participant not found"));
+        Bid bidRequest = new Bid();
+        bidRequest.setBidAmount(bidAmount);
+        bidRequest.setAuctionId(auction.getId());
+        bidRequest.setParticipantId(participantFound.getId());
+
+        List<Bid> bidsFromDb = bidMapper.entitiesToModel(bidRepositoryService.findByAuctionId(auctionId));
+        validateBid(bidsFromDb, auction, bidRequest);
+
+        bidRequest.setBidTime(LocalDateTime.now());
+        return bidMapper.entityToModel(bidRepositoryService.save(bidRequest));
+    }
+
+    private void validateBid(List<Bid> bidsFromDb, Auction auction, Bid bidRequest) {
+        if (!bidsFromDb.isEmpty() && bidRequest.getBidAmount().compareTo(bidsFromDb.get(0).getBidAmount()) <= 0) {
+            throw new InputException("Bid amount must be higher than the current highest bid");
         }
         if (LocalDateTime.now().isBefore(auction.getStartTime()) || LocalDateTime.now().isAfter(auction.getEndTime())) {
-            throw new RuntimeException("Bidding is not allowed at this time");
+            throw new InputException("Bidding is not allowed at this time");
         }
-        bid.setTimestamp(LocalDateTime.now());
-        return bidMapper.entityToModel(bidRepositoryService.save(bid));
     }
 
-    public Auction getAuctionDetails(Long auctionId) {
-        return auctionMapper.entityToModel(auctionRepositoryService.findByAuctionId(auctionId)
-                .orElseThrow(() -> new AuctionNotFoundException(String.format("Auction not found with id {}", auctionId))));
+    public AuctionDetails getAuctionDetails(Long auctionId) {
+        updateAuctionStatus();
+        Optional<AuctionEntity> auctionEntity = auctionRepositoryService.findByAuctionId(auctionId);
+        if (auctionEntity.isPresent()) {
+            List<BidEntity> bidEntities = bidRepositoryService.findByAuctionId(auctionId);
+            Bid bid = bidMapper.entityToModel(bidEntities.get(0));
+            Auction auction = auctionMapper.entityToModel(auctionEntity.get(), new CycleAvoidingMappingContext());
+            return new AuctionDetails(auction, bid);
+        }
+        throw new AuctionNotFoundException(String.format("Auction not with id {} ", auctionId));
     }
 
     public List<Auction> getAllAuctions() {
-        return auctionMapper.entitiesToModels(auctionRepositoryService.findAll());
+        updateAuctionStatus();
+        return auctionMapper.entitiesToModels(auctionRepositoryService.findAll(),  new CycleAvoidingMappingContext());
     }
 
     public void updateAuctionStatus() {
-        List<Auction> ongoingAuctions = auctionMapper.entitiesToModels(auctionRepositoryService.findByStatus(Status.ONGOING));
+        List<Auction> ongoingAuctions = auctionMapper.entitiesToModels(auctionRepositoryService.findByStatus(Status.ONGOING),  new CycleAvoidingMappingContext());
         for (Auction auction : ongoingAuctions) {
             if (LocalDateTime.now().isAfter(auction.getEndTime())) {
                 List<Bid> bids = bidMapper.entitiesToModel(bidRepositoryService.findByAuctionId(auction.getId()));

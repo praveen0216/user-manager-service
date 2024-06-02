@@ -2,9 +2,11 @@ package com.management.user.output.repository.base;
 
 import com.management.user.exception.AuctionNotFoundException;
 import com.management.user.input.mapper.AuctionMapper;
+import com.management.user.input.mapper.CycleAvoidingMappingContext;
 import com.management.user.model.Auction;
 import com.management.user.model.Status;
 import com.management.user.output.repository.entity.AuctionEntity;
+import com.management.user.output.repository.entity.UserEntity;
 import com.management.user.output.repository.service.AuctionRepositoryService;
 import com.management.user.output.repository.spi.AuctionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,9 +32,12 @@ public class AuctionRepositoryServiceImpl implements AuctionRepositoryService {
         return auctionRepository.findById(auctionId);
     }
 
+
     @Override
-    public AuctionEntity create(Auction auction) {
-        return auctionRepository.saveAndFlush(auctionMapper.modelToEntity(auction));
+    public AuctionEntity create(Auction auction, UserEntity userEntity) {
+        AuctionEntity auctionEntity = auctionMapper.modelToEntity(auction, new CycleAvoidingMappingContext());
+        auctionEntity.setAuctioneer(userEntity);
+        return auctionRepository.saveAndFlush(auctionEntity);
     }
 
     @Override
