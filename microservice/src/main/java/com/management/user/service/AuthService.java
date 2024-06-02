@@ -1,4 +1,3 @@
-/*
 package com.management.user.service;
 
 import com.management.user.model.AccessTokenResponse;
@@ -36,4 +35,3 @@ public class AuthService {
         return new AccessTokenResponse(token);
     }
 }
-*/

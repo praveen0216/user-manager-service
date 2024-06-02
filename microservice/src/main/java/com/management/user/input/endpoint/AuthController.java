@@ -1,10 +1,8 @@
-/*
 package com.management.user.input.endpoint;
 
 import com.management.user.model.LoginRequest;
 import com.management.user.model.AccessTokenResponse;
 import com.management.user.service.AuthService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -18,7 +16,6 @@ public class AuthController {
 
     private final AuthService authService;
 
-    @Autowired
     public AuthController(AuthService authService) {
         this.authService = authService;
     }
@@ -32,4 +29,3 @@ public class AuthController {
 
 }
 
-*/

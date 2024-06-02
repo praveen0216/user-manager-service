@@ -15,7 +15,11 @@ spring:
     hibernate:
       ddl-auto: none
 
-
+logging:
+  level:
+    org:
+      springframework:
+        security : DEBUG
 
 security:
   jwt:

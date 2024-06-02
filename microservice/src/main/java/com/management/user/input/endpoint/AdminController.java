@@ -6,6 +6,7 @@ import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -20,7 +21,7 @@ public class AdminController {
     @Autowired
     private AdminService adminService;
 
-   // @PreAuthorize("hasRole('ADMINISTRATOR')")
+   //@PreAuthorize("hasRole('ADMINISTRATOR')")
    @GetMapping("/report")
    public ResponseEntity<ByteArrayResource> downloadReport() {
        byte[] data = adminService.generateReport();
