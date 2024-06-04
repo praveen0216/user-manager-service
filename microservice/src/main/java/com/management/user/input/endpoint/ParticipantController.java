@@ -3,7 +3,6 @@ package com.management.user.input.endpoint;
 import com.management.user.service.AuctionService;
 import com.management.user.service.UserService;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -28,11 +27,10 @@ public class ParticipantController {
         this.userService = userService;
     }
 
-    //@PreAuthorize("hasRole('PARTICIPANT')")
+
     @PostMapping("/{id}/bids")
     public ResponseEntity<String> submitBid(@PathVariable("id") Long auctionId, @RequestParam(name = "bidAmount") BigDecimal bidAmount) {
         UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        //Long participantId = userService.findByEmail("participant2@gmail.com"/*userDetails.getUsername()*/).getId();
         Long participantId = userService.findByEmail(userDetails.getUsername()).getId();
         auctionService.submitBid(auctionId, participantId, bidAmount);
         return ResponseEntity.ok("Bid submitted successfully");

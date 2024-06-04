@@ -29,13 +29,17 @@ public class AdminService {
 
     private final AuctionMapper auctionMapper;
 
-    public AdminService(UserRepositoryService userRepositoryService, AuctionRepositoryService auctionRepositoryService, AuctionMapper auctionMapper) {
+    private final UpdateAuctionStatusService updateAuctionStatusService;
+
+    public AdminService(UserRepositoryService userRepositoryService, AuctionRepositoryService auctionRepositoryService, AuctionMapper auctionMapper, UpdateAuctionStatusService updateAuctionStatusService) {
         this.userRepositoryService = userRepositoryService;
         this.auctionRepositoryService = auctionRepositoryService;
         this.auctionMapper = auctionMapper;
+        this.updateAuctionStatusService = updateAuctionStatusService;
     }
 
     public byte[] generateReport() {
+        updateAuctionStatusService.updateAuctionStatus();
         Report report = getReportDetails();
         try (ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
              OutputStreamWriter outputStreamWriter = new OutputStreamWriter(outputStream)) {
