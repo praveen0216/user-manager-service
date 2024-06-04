@@ -21,6 +21,11 @@ logging:
       springframework:
         security : DEBUG
 
+updatestatus:
+  schedulting:
+    enabled: true
+
+
 security:
   jwt:
     secret-key: verysecretkeyfghjkqwertyui

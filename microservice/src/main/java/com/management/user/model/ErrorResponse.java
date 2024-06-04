@@ -6,6 +6,9 @@ public class ErrorResponse {
     private long timestamp;
 
     public ErrorResponse(ErrorCode errorCode, String errorMessage) {
+        this.errorCode =errorCode;
+        this.errorMessage = errorMessage;
+        this.timestamp = System.currentTimeMillis();
     }
 
     public ErrorCode getErrorCode() {

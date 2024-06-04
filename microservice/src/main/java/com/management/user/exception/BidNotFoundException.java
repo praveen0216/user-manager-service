@@ -1,9 +1,9 @@
 package com.management.user.exception;
 
+public class BidNotFoundException extends RuntimeException {
 
-public class InputException extends RuntimeException {
     private String errorMessage;
-    public InputException(String errorMessage) {
+    public BidNotFoundException(String errorMessage) {
         super(errorMessage);
         this.errorMessage = errorMessage;
     }

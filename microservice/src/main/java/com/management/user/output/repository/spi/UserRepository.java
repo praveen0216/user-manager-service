@@ -16,13 +16,13 @@ public interface UserRepository extends JpaRepository<UserEntity, Long> {
 
     @Query("SELECT new com.management.user.model.UserFrequency(u.email, COUNT(b.id)) " +
             "FROM UserEntity u LEFT JOIN BidEntity b ON u.id = b.participant.id " +
-            "WHERE u.role = 'PARTICIPANT' " +
+            "WHERE u.role = 'ROLE_PARTICIPANT' " +
             "GROUP BY u.email")
     List<UserFrequency> findUserBidCounts();
 
     @Query("SELECT new com.management.user.model.UserFrequency(u.email, COUNT(a.id)) " +
             "FROM UserEntity u LEFT JOIN AuctionEntity a ON u.id = a.auctioneer.id " +
-            "WHERE u.role = 'AUCTIONEER' " +
+            "WHERE u.role = 'ROLE_AUCTIONEER' " +
             "GROUP BY u.email")
     List<UserFrequency> findUserAuctionCounts();
 

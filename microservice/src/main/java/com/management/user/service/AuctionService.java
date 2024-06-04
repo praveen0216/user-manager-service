@@ -15,9 +15,9 @@ import com.management.user.output.repository.entity.UserEntity;
 import com.management.user.output.repository.service.AuctionRepositoryService;
 import com.management.user.output.repository.service.BidRepositoryService;
 import com.management.user.output.repository.service.UserRepositoryService;
-import com.management.user.output.repository.spi.AuctionRepository;
-import com.management.user.output.repository.spi.BidRepository;
 import com.management.user.output.repository.spi.UserRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -28,8 +28,8 @@ import java.util.Optional;
 
 @Service
 public class AuctionService {
-    @Autowired
-    private AuctionRepository auctionRepository;
+
+    protected  static final Logger LOGGER = LoggerFactory.getLogger(AuctionService.class);
 
     private final  AuctionRepositoryService auctionRepositoryService;
 
@@ -40,18 +40,24 @@ public class AuctionService {
 
     private final UserRepositoryService userRepositoryService;
 
-    @Autowired
-    private BidRepository bidRepository;
+    private final UpdateAuctionStatusService updateAuctionStatusService;
+
 
     @Autowired
     private UserRepository userRepository;
 
-    public AuctionService(AuctionRepositoryService auctionRepositoryService, BidRepositoryService bidRepositoryService, AuctionMapper auctionMapper, BidMapper bidMapper, UserRepositoryService userRepositoryService) {
+    public AuctionService(AuctionRepositoryService auctionRepositoryService,
+                          BidRepositoryService bidRepositoryService,
+                          AuctionMapper auctionMapper,
+                          BidMapper bidMapper,
+                          UserRepositoryService userRepositoryService,
+                          UpdateAuctionStatusService updateAuctionStatusService) {
         this.auctionRepositoryService = auctionRepositoryService;
         this.bidRepositoryService = bidRepositoryService;
         this.auctionMapper = auctionMapper;
         this.bidMapper = bidMapper;
         this.userRepositoryService = userRepositoryService;
+        this.updateAuctionStatusService = updateAuctionStatusService;
     }
 
     public Auction createAuction(Auction auction, Long auctioneerId) {
@@ -88,34 +94,20 @@ public class AuctionService {
     }
 
     public AuctionDetails getAuctionDetails(Long auctionId) {
-        updateAuctionStatus();
+        updateAuctionStatusService.updateAuctionStatus();
         Optional<AuctionEntity> auctionEntity = auctionRepositoryService.findByAuctionId(auctionId);
         if (auctionEntity.isPresent()) {
             List<BidEntity> bidEntities = bidRepositoryService.findByAuctionId(auctionId);
-            Bid bid = bidMapper.entityToModel(bidEntities.get(0));
+            Bid bid = null;
+            if (!bidEntities.isEmpty()) {
+              bid = bidMapper.entityToModel(bidEntities.get(0));
+            } else {
+                LOGGER.info(String.format("Bid not found for the given auction id {} ", auctionId));
+            }
             Auction auction = auctionMapper.entityToModel(auctionEntity.get(), new CycleAvoidingMappingContext());
             return new AuctionDetails(auction, bid);
-        }
-        throw new AuctionNotFoundException(String.format("Auction not with id {} ", auctionId));
-    }
-
-    public List<Auction> getAllAuctions() {
-        updateAuctionStatus();
-        return auctionMapper.entitiesToModels(auctionRepositoryService.findAll(),  new CycleAvoidingMappingContext());
-    }
-
-    public void updateAuctionStatus() {
-        List<Auction> ongoingAuctions = auctionMapper.entitiesToModels(auctionRepositoryService.findByStatus(Status.ONGOING),  new CycleAvoidingMappingContext());
-        for (Auction auction : ongoingAuctions) {
-            if (LocalDateTime.now().isAfter(auction.getEndTime())) {
-                List<Bid> bids = bidMapper.entitiesToModel(bidRepositoryService.findByAuctionId(auction.getId()));
-                if (!bids.isEmpty() && bids.get(0).getBidAmount().compareTo(auction.getReservedPrice()) >= 0) {
-                    auction.setStatus(Status.SUCCESS);
-                } else {
-                    auction.setStatus(Status.FAILURE);
-                }
-                auctionRepositoryService.updateStatus(auction);
             }
+        throw new AuctionNotFoundException(String.format("Auction not found with id {} ", auctionId));
         }
+
     }
-}
